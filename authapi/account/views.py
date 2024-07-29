@@ -5,11 +5,9 @@ from account.serializer import *
 from django.contrib.auth import authenticate
 from account.renderers import UserRenderes
 from rest_framework.permissions import IsAuthenticated
-
-
-#Generate token manualy
 from rest_framework_simplejwt.tokens import RefreshToken
 
+#Generate token manualy
 def get_tokens_for_user(user):
     refresh = RefreshToken.for_user(user)
 
@@ -74,4 +72,11 @@ class UserChangePasswordView(APIView):
             return Response({'msg' : 'password change successfully'}, status= status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
+#send password reset email
+class SendPasswordResetEmailView(APIView):
+  renderer_classes =[UserRenderes]
+  def post(self, request, format=None):
+    serializer = SendPasswordResetEmailSerializer(data=request.data)
+    serializer.is_valid(raise_exception=True)
+    return Response({'msg':'Password Reset link send. Please check your Email'}, status=status.HTTP_200_OK)
 
